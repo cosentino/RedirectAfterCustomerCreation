@@ -1,4 +1,2 @@
-#app/code/local/Gufo/CustomerGroupByNewsletterSubscription/  app/code/local/Gufo/CustomerGroupByNewsletterSubscription/
-#app/etc/modules/* app/etc/modules/
-#app/design/frontend/default/default/layout/*	app/design/frontend/default/default/layout/
-#js/customerGroupByNewsletterSubscription/	js/customerGroupByNewsletterSubscription/
+app/code/local/Gufo/RedirectAfterCustomerCreation/  app/code/local/Gufo/RedirectAfterCustomerCreation/
+app/etc/modules/* app/etc/modules/
