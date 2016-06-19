@@ -31,28 +31,31 @@ class Gufo_RedirectAfterCustomerCreation_Model_Observer_Frontend
         /* @var $controller Mage_Customer_AccountController */
         /* @var $session Mage_Customer_Model_Session */
 
-        $session = Mage::getSingleton('customer/session');
+        $customerSession = Mage::getSingleton('customer/session');
+        $coreSession = Mage::getSingleton('core/session');
 
         // We must test for a successful customer registration because they
         // could have failed registration despite reaching postdispatch
         // (for example: they used an existing email address)
-        if ($session->getData('customer_register_success')) {
-            $session->unsetData('customer_register_success');
+        if ($customerSession->getData('customer_register_success')) {
+            $customerSession->unsetData('customer_register_success');
 
-            //$session = $this->_getSession();
-            $controller = $observer->getData('controller_action');
+            // rewrite the message to the "correct" session
+            // in order to make sure that any page will be able to show the message
+            // (see http://blog.fabian-blechschmidt.de/messages-in-magento-only-loaded-by-default-from-core-session/)
+            foreach ($customerSession->getMessages()->getItems() as $message) {
+                $coreSession->addMessage($message);
+            }
+            $customerSession->getMessages(true);
 
             // Redirect customer to the last page visited before registering
+            $controller = $observer->getData('controller_action');
             $referer = $controller->getRequest()->getParam(Mage_Customer_Helper_Data::REFERER_QUERY_PARAM_NAME);
             if ($referer) {
                 // Rebuild referer URL to handle the case when SID was changed
                 $referer = Mage::getModel('core/url')
                     ->getRebuiltUrl(Mage::helper('core')->urlDecode($referer));
-                /*if ($this->_isUrlInternal($referer)) {
-                    $session->setBeforeAuthUrl($referer);
-                }*/
             }
-
             $controller->getResponse()->setRedirect($referer);
         }
     }
